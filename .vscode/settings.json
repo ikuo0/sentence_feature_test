@@ -1,0 +1,15 @@
+{
+    "python.testing.pytestArgs": [
+        "word_boundary"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "search.exclude": {
+        "**/data": true,
+        "**/out": true
+    },
+    "files.watcherExclude": {
+        "**/data": true,
+        "**/out": true
+    }
+}

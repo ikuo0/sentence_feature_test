@@ -1,0 +1,19 @@
+{
+  "name": "Conda DevContainer",
+  "image": "mcr.microsoft.com/devcontainers/anaconda:3",
+  "postCreateCommand": "conda update -n base -c defaults conda -y",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/conda/bin/python"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+  "mounts": [
+    "source=conda_envs_personal,target=/opt/conda/envs,type=volume"
+  ]
+}
