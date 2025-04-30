@@ -52,16 +52,15 @@ def list_int_to_binary(data: List[int]) -> bytes:
     return array.tobytes()
 
 
-def save_binary_to_file(binary_data: bytes, file_path: str) -> None:
+def save_binary_to_file(int_array: List[int], file_path: str) -> None:
     """バイナリデータをファイルに保存する"""
-    with open(file_path, 'wb') as f:
-        f.write(binary_data)
+    x = np.array(int_array, dtype=np.int32)
+    np.save(file_path, x)
 
 
-def load_binary_from_file(file_path: str) -> bytes:
+def load_binary_from_file(file_path: str) -> np.ndarray:
     """バイナリデータをファイルから読み込む"""
-    with open(file_path, 'rb') as f:
-        return f.read()
+    return np.load(file_path, allow_pickle=True)
 
 
 def binary_to_list_int(binary_data: bytes) -> list[int]:
@@ -72,8 +71,8 @@ def binary_to_list_int(binary_data: bytes) -> list[int]:
 
 def load_index_data(file_path: str) -> List[int]:
     """バイナリデータをファイルから読み込み、List[int] に復元する"""
-    binary_data = load_binary_from_file(file_path)
-    return binary_to_list_int(binary_data)
+    ndarray_data = load_binary_from_file(file_path)
+    return ndarray_data.tolist()
 
 
 def remove_files_by_name(file_list: List[str], ignore_file_names: List[str]) -> List[str]:
@@ -147,13 +146,12 @@ class TextToIndex:
         info, body = read_livedoor_file(input_path)
         normalize = normalize_text.normalize(body)
         indexes = text_to_index(normalize, characters)
-        bin_data = list_int_to_binary(indexes)
         basename = os.path.basename(input_path)
         basename = os.path.splitext(basename)[0]
         info_path = os.path.join(output_directory, f"{basename}.yaml")
-        bin_data_path = os.path.join(output_directory, f"{basename}.bin")
+        bin_data_path = os.path.join(output_directory, f"{basename}.npy")
         yaml.dump(info, open(info_path, 'w'), allow_unicode=True)
-        save_binary_to_file(bin_data, bin_data_path)
+        save_binary_to_file(indexes, bin_data_path)
 
     @classmethod
     def livedoor_files_to_index(cls, file_list: List[str], characters: dict, out_put_directory: str) -> None:
@@ -164,14 +162,13 @@ class TextToIndex:
     def save_index_data(cls, original_path_name: str, index_data: List[int], out_put_directory: str) -> None:
         base_name = os.path.basename(original_path_name)
         file_name = os.path.splitext(base_name)[0]
-        out_data_file_path = os.path.join(out_put_directory, f"{file_name}.bin")
+        out_data_file_path = os.path.join(out_put_directory, f"{file_name}.npy")
         out_info_file_path = os.path.join(out_put_directory, f"{file_name}.yaml")
         info_data = {
             "original_path_name": original_path_name,
             "size": len(index_data),
         }
-        binary_data = list_int_to_binary(index_data)
-        save_binary_to_file(binary_data=binary_data, file_path=out_data_file_path)
+        save_binary_to_file(int_array=index_data, file_path=out_data_file_path)
         yaml.dump(info_data, open(out_info_file_path, 'w'), allow_unicode=True)
 
     @classmethod

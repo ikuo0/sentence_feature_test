@@ -7,10 +7,14 @@ FILE_DIR = os.path.dirname(__file__)
 DATA_DIR_RELATIVE = "../../data/livedoor_corpus/text"
 DATA_DIR_ABS = os.path.abspath(os.path.join(FILE_DIR, DATA_DIR_RELATIVE))
 OUT_DIR_RELATIVE = "../../out/test"
-OUT_DIR_ABS = os.path.abspath(os.path.join(FILE_DIR, OUT_DIR_RELATIVE))
+OUT_DIR_ROOT = os.path.abspath(os.path.join(FILE_DIR, OUT_DIR_RELATIVE))
+OUT_DIR_ABS = os.path.join(OUT_DIR_ROOT, "preprocessing", "summary_characters")
 
 class TestSummaryCharacters:
+    # pytest -s -vv word_boundary/preprocessing/summary_characters_test.py::TestSummaryCharacters
+
     def test_summary_characters(self):
+        # pytest -s -vv word_boundary/preprocessing/summary_characters_test.py::TestSummaryCharacters::test_summary_characters
         # Test the summary characters function
 
         # Example input
@@ -62,6 +66,19 @@ class TestSummaryCharacters:
             out_put_file_name=out_file,
             batch_size=10,
             max_workers=4,
+            sampling_config=sampling_config,
+            ignore_file_names=["CHANGES.txt", "README.txt", "LICENSE.txt"]
+        )
+
+    def test_summary_parallel_all(self):
+        # pytest -s -vv word_boundary/preprocessing/summary_characters_test.py::TestSummaryCharacters::test_summary_parallel_all
+        sampling_config = SamplingConfig()
+        out_file = os.path.join(OUT_DIR_ABS, "test_summary_parallel_all.txt")
+        SummaryCharacters.summary_parallel(
+            data_directory=DATA_DIR_ABS,
+            out_put_file_name=out_file,
+            batch_size=100,
+            max_workers=12,
             sampling_config=sampling_config,
             ignore_file_names=["CHANGES.txt", "README.txt", "LICENSE.txt"]
         )

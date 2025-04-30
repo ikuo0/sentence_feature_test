@@ -5,6 +5,7 @@ import sys
 from typing import List, Tuple
 from word_boundary.preprocessing import normalize_text
 from concurrent.futures import ThreadPoolExecutor
+from word_boundary import util
 
 
 def enum_data_file(data_directory: str) -> List[str]:
